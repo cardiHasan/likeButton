@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <title>Like Button</title>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2 text-right">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="col-sm-2">
+                <span id="count">0</span>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-12 text-center">
+                <form action="">
+                    <button type="button" class="btn btn-info" id="btnLike">Like</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function()
+        {
+            var t_count = 0;
+            // get count from db on page load
+            $.post("./conn/sqlHelper.php",
+                {fun:"getCount"},
+                function(data,status){
+                    console.log("Got..."+data);
+                    var obj = JSON.parse(data);
+                    if(obj[0].TotalCount!="error")
+                    {
+                        $("#count").html(obj[0].TotalCount);
+                    }
+                });
+            
+            $("#btnLike").on("click",function(){
+                t_count = parseInt($("#count").html());
+                $("#count").html(t_count+1);
+                
+                // Save data to database
+                $.post("./conn/sqlHelper.php",
+                {fun:"setCount",count : t_count+1},
+                function(data,status){
+                    console.log("Saved..."+data);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
